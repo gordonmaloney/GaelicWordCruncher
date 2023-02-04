@@ -1,0 +1,6 @@
+Flask
+requests
+lxml
+bs4
+Gunicorn
+flask-cors
