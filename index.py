@@ -3,16 +3,17 @@ from bs4 import BeautifulSoup
 import lxml
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+import urllib.parse
 
 import gender
 import ipa
 import audio
 import plural
 import genitive
+import wikibulk
 
 app = Flask(__name__)
 CORS(app)
-
 
 @app.route('/', methods=['GET'])
 def home():
@@ -61,14 +62,13 @@ def genroute():
 @app.route('/all', methods=['POST'])
 def allroutes():
     data = request.get_json()
-    word = data['word']
+    word = urllib.parse.quote(data['word'], safe="")
+    print(word)
     return jsonify(
-        word = word,
+        word = data['word'],
         gender = gender.FetchGender(word),
-        audio = audio.FetchAudio(word),
-        ipa = ipa.FetchIpa(word),
-        genitive = genitive.FetchGen(word),
-        plural = plural.FetchPlural(word)
+        audio = audio.FetchAudio(data['word']),
+        ipaGenPl = wikibulk.FetchAll(word)
     )
 
 

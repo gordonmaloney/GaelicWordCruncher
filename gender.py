@@ -27,7 +27,12 @@ def MascWord(word):
     else:
         return('an '+word)
 
-def FetchGender(word):
+
+
+
+
+
+def FaclairFetchGender(word):
     try:
         url = 'https://faclair.info/'
         headers = {'Content-Type': 'text/html'}
@@ -53,6 +58,43 @@ def FetchGender(word):
             return ({
                 'status': 200,
                 'word': MascWord(word),
+                'gender': 'masc',
+                }
+            )
+
+    except:
+        return ({
+            'status': 404,
+            'message': 'word not found :('}
+        )
+
+
+
+##wiki
+def FetchGender(word):
+    try:
+        url = f'https://en.wiktionary.org/wiki/{word}'
+
+        r = requests.get(url)
+
+        soup = BeautifulSoup(r.content, 'lxml')
+
+        wordForms = soup.find('span', class_="mw-headline", id="Scottish_Gaelic").findNext("strong").findParent('p')
+
+        decodedWord = wordForms.find('strong').string
+
+        gender = wordForms.find('abbr').string
+
+        if gender == 'f':
+            return ({
+                'status': 200,
+                'word': FemWord(decodedWord),
+                'gender': 'fem'}
+            )
+        if gender == 'm':
+            return ({
+                'status': 200,
+                'word': MascWord(decodedWord),
                 'gender': 'masc',
                 }
             )

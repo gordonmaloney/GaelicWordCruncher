@@ -12,13 +12,14 @@ def FetchPlural(word):
 
         soup = BeautifulSoup(r.content, 'lxml')
 
-        wordForms = soup.find('span', class_="mw-headline", id="Scottish_Gaelic").findNext("strong", string=word).findParent('p')
+        wordForms = soup.find('span', class_="mw-headline", id="Scottish_Gaelic").findNext("strong").findParent('p')
 
+        decodedWord = wordForms.find('strong').string
         plur = wordForms.find('i', string="plural").findNext('b').string
 
         return ({
             'status': 200,
-            'word': word,
+            'word': decodedWord,
             'plural': plur
         })
 
@@ -28,6 +29,3 @@ def FetchPlural(word):
             'status': 400,
             'message': "word not found"}
         )
-
-
-print(FetchPlural('duine'))
