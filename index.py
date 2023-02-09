@@ -7,6 +7,8 @@ from flask_cors import CORS
 import gender
 import ipa
 import audio
+import plural
+import genitive
 
 app = Flask(__name__)
 CORS(app)
@@ -19,30 +21,54 @@ def home():
 
 @app.route('/gender', methods=['POST'])
 def genderroute():
-    word = request.form.get('word')
-    return gender.FetchGender(word)
+    data = request.get_json()
+
+    word = data['word']
+    if word:
+        return gender.FetchGender(word)
+    else:
+        return jsonify(message = 'uh oh')
 
 
 @app.route('/ipa', methods=['POST'])
 def iparoute():
-    word = request.form.get('word')
+    data = request.get_json()
+    word = data['word']
+
     return ipa.FetchIpa(word)
 
 
 @app.route('/audio', methods=['POST'])
 def audioroute():
-    word = request.form.get('word')
+    data = request.get_json()
+    word = data['word']
     return audio.FetchAudio(word)
+
+
+@app.route('/plural', methods=['POST'])
+def pluralroute():
+    data = request.get_json()
+    word = data['word']
+    return plural.FetchPlural(word)
+
+@app.route('/genitive', methods=['POST'])
+def genroute():
+    data = request.get_json()
+    word = data['word']
+    return genitive.FetchGen(word)
 
 
 @app.route('/all', methods=['POST'])
 def allroutes():
-    word = request.form.get('word')
+    data = request.get_json()
+    word = data['word']
     return jsonify(
         word = word,
         gender = gender.FetchGender(word),
         audio = audio.FetchAudio(word),
-        ipa = ipa.FetchIpa(word)
+        ipa = ipa.FetchIpa(word),
+        genitive = genitive.FetchGen(word),
+        plural = plural.FetchPlural(word)
     )
 
 
